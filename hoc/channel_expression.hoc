@@ -1,0 +1,204 @@
+// specific_cases.hoc
+// This hoc script will run specific cases similar to interactively created
+// in a Shepherd Higley Carnevale Chiu Morse (McDougal) meeting 3/15/12
+// The lines typed into the oc> prompt on that day are interspersed with
+// procedure calls that are equivalent to button clicks with the mouse
+// This file/prodcedure was heavily modified to use HVA, LVA Ca channels,
+// & fast/slow k currents to approximate A-type channels
+
+
+proc insert_defaultChannels() {
+	// The below is an excerpt from McCormick, Yu et al. papers accession 135839 except for the value of Ra taken from Mainen et al. 1995
+	// Rapid_rising_somatic_spike_soma_axon.hoc
+	// where many lines have been deleted and all lines refering to axon and bleb
+	// have been commented out or deleted and the dend section name has been
+	// changed to dendrite TMM 20120420
+
+	// Create the neuron- these are the constants that will be used 
+	rm = 25000
+	v_init    = -70 // raised 20121024
+	celsius   = 37
+	Ek = -80   //-90 might affect the axon spike phase slope value low, and less noisy, increase to be -85?
+						 //   maybe not, still need check
+	Ena = 60
+	ra = 200 // use Mainen et al. 1996 200 instead of 150  //the larger, the soma kink slope large is
+	c_m = 0.75 // the optimal value, both increase and decrease will decrease slope value
+						 //however, small C value will have high dv/dt value
+	xn = 1
+	gna = 8000 //7500
+	gk = 1600 //1800
+	ndend=100  // increase this will increase kink slope
+
+
+	gkm = .3
+	gca = .3
+	gkca = .3
+
+	gca_soma = gca
+	gkm_soma = gkm
+	gkca_soma = gkca
+	
+	//Set shared section parameters
+	
+	forall {
+		// Passive Properties
+		Ra = ra
+		cm = c_m
+		g_pas = 1/rm
+		e_pas = v_init
+		
+		
+		//Sodium Channels
+		insert na
+		if(ismembrane("na_ion")) {
+			ena = Ena
+			// seems to be necessary for 3d cells to shift Na kinetics -5 mV
+			vshift_na = -6 //-5
+		}
+		//Potassium Channels
+		insert kv 
+		insert kap 		gbar_kap=0
+		insert kad		gbar_kad=0
+	
+		insert km		  gbar_km  = 0 //gkm
+		insert kca		gbar_kca = 0 //gkca
+		if(ismembrane("k_ion")) {ek = Ek}
+		
+	
+		//Calcium Channels
+		insert Ca_HVA     gbar_Ca_HVA = 0 //gca
+		insert Ca_LVA 		gbar_Ca_LVA = 0
+		insert cad
+		
+		//Other Conductances
+		insert Ih gIhbar_Ih = 0 
+		insert ds                     //This supposedly stores peak V -> not currently being used
+		
+		//NOT SURE WHAT THIS DOES YET
+		if(ismembrane("ca_ion")) {
+			eca = 140
+			ion_style("ca_ion",0,1,0,0,0)
+			vshift_ca = 0
+		}
+		
+		forall if (ismembrane("ca")) {
+			gbar_Ca_HVA=1e-3 // arbitrary value small enough to not matter electrically
+		}
+
+
+	}
+	
+	
+	
+}
+
+
+proc adjust_compartmentexcitability() {
+	//Soma Specific changes
+	soma cm=c_m	            
+	//soma.gbar_na = 0.1*gna  //750 //gna/8 // increase this will increase dv/dt amplitude, but weak kink value
+	//soma.gbar_kv = gk/5 //250 //gk/2 // increase this will increase dv/dt amplitude and weak biphase
+	soma.gbar_na=800
+	soma.gbar_kv=600
+	
+	//ApicalTrunk Specific Changes
+	for i=0,ndend-1 {
+		apicaltrunk[i].gbar_na = 20 //100 //10 //increase this will make cell has spontaneous spikes.
+		apicaltrunk[i].gbar_kv=100
+	}						
+	//ApicalTrunk Specific Changes
+	apicaltuftA.gbar_na = 20 //100 //10 //increase this will make cell has spontaneous spikes.
+	apicaltuftA.gbar_kv=100
+		
+	apicaltuftB.gbar_na = 20 //100 //10 //increase this will make cell has spontaneous spikes.
+	apicaltuftB.gbar_kv=100
+			
+	apicaltuftNexus.gbar_na=20
+	apicaltuftNexus.gbar_kv=100
+	
+	//Basal Specific Changes
+	basal.gbar_na=20
+	basal.gbar_kv=100
+	
+	
+	//ais.gbar_na=9512.289205
+	//ais.gbar_kv= 475.820646
+	//axon.gbar_na=0.1*gna
+	//axon.gbar_kv=gk/5
+}
+
+{insert_defaultChannels()}
+{adjust_compartmentexcitability()}
+
+
+//Membrane excitability tweak	
+objref d
+d = new SectionList() // contains dendrite and Spine's
+for i=0,ndend-1 {
+	apicaltrunk[i] d.append()
+}
+
+
+
+proc adjust_excitability() {
+	factor = 0.5
+	diam2_dendrite_gbar_Ca_HVA =0.032326
+	diamp7_dendrite_gbar_Ca_HVA = 0.04202328
+
+	forall e_pas=-70 // makes Vrest about -64
+	if ($1) { // for dendrite diams=2
+		 forsec d {
+				diam=2
+				gbar_na=factor*80 
+				gbar_kv=factor*24 
+				gbar_Ca_HVA=diam2_dendrite_gbar_Ca_HVA
+			}  // increase k
+	} else {  // for dendrite diams=.7
+		 forsec d {
+				 diam=0.7
+				 gbar_na=factor*80 
+				 gbar_kv=factor*150 
+				 gbar_Ca_HVA=diamp7_dendrite_gbar_Ca_HVA
+		 } // gbar_kv increased for small diam dendrites
+	}
+	
+	Spine[0].head.gbar_na= 0
+	Spine[0].head.gbar_kv= 0
+	Spine[0].head.gbar_Ca_HVA= apicaltrunk[24].gbar_Ca_HVA
+	Spine[0].head.gbar_Ca_LVA= 0
+	Spine[0].head.gIhbar_Ih=0
+	
+	
+	Spine[0].neck.gbar_na=0
+	Spine[0].neck.diam=0.07
+
+}
+	
+adjust_excitability(-1)
+
+
+
+proc LinearKAGradient() {
+
+			
+			for i=0,ndend-1 apicaltrunk[i]{ 
+				gbar_kap= KAP_alpha * i/(ndend-1) + KAP_beta
+				gbar_kad= KAD_alpha * i/(ndend-1) + KAD_beta
+			}
+			
+			
+			//For consitency sake we'll set the somatic compartment to apicaltrunk[i]
+			soma.gbar_kap=apicaltrunk[0].gbar_kap
+			soma.gbar_kad=apicaltrunk[0].gbar_kad
+			
+			//Set ApicalNexus and Tuft to apicaltrunk[99]
+			apicaltuftNexus.gbar_kap=apicaltrunk[99].gbar_kap
+			apicaltuftA.gbar_kap=apicaltuftNexus.gbar_kap
+			apicaltuftB.gbar_kap=apicaltuftB.gbar_kap
+			
+			apicaltuftNexus.gbar_kad=apicaltrunk[99].gbar_kad
+			apicaltuftA.gbar_kad=apicaltuftNexus.gbar_kad
+			apicaltuftB.gbar_kad=apicaltuftB.gbar_kad
+}
+LinearKAGradient()
+

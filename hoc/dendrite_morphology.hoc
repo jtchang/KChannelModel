@@ -1,0 +1,82 @@
+// dendrite_morphology.hoc
+// create a simple dendrite to which spines can be added.
+// from chiu et al. 2013
+
+//Moving pertinent variable up here so they're easier to modify
+ndend=100
+//start_diam=3
+// for visualization
+const_diam = .7 // >=1.395 one AP // diam <1.39 E_Cl fig3 gets two or more APs
+//start_diam=const_diam
+
+//end_diam=1
+////////////////////////////////
+//Create a simple aspiny apical trunk//
+///////////////////////////////
+
+create apicaltrunk[ndend]
+
+// study convergence of number of nodes (nseg) later
+// for now use a large nseg because model is simple anyway
+// (computationally small cost)
+//apicaltrunk { L=600 nseg=1200 }
+//apicaltrunk{ insert pas }
+
+for i=0,ndend-1 apicaltrunk[i]{
+
+	nseg=5
+	diam=3
+	L=5
+	insert pas
+}
+
+
+
+//apicaltrunk for(x,0) { diam(x)=start_diam*(1-x) + end_diam*x }
+
+// this function supplied in case want to study tapering of apicaltrunk:
+proc readjust_dend_diam() {
+  start_diam=$1
+  end_diam=$2
+  apicaltrunk for(x,0) { diam(x)=start_diam*(1-x) + end_diam*x }
+}
+create apicaltuftNexus
+apicaltuftNexus {L= 10 nseg=1}
+apicaltuftNexus {insert pas}
+apicaltuftNexus for(x,0) {diam(x)=const_diam}
+//////////////////////////////////////////////
+//Attach a two tuft dendrites to end of the apical trunk//
+//////////////////////////////////////////////
+create apicaltuftA
+apicaltuftA { L= 200 nseg=1}
+apicaltuftA {insert pas}
+apicaltuftA for(x, 0) { diam(x)= const_diam}
+
+create apicaltuftB
+apicaltuftB { L= 200 nseg=1}
+apicaltuftB {insert pas}
+apicaltuftB for(x, 0) { diam(x)= const_diam}
+
+
+///////////////////////////////
+/// Create Basal Dendrite /////
+///////////////////////////////
+
+create basal
+basal { L=100 nseg =1}
+basal {insert pas}
+basal {diam = const_diam}
+
+///////////////////
+/// Create Axon ///
+///////////////////
+
+//create ais
+//ais {L=5 nseg =5}
+//ais {insert pas}
+//ais {diam= 0.5}
+
+//create axon
+//axon {L=500 nseg =5}
+//axon {insert pas}
+//axon {diam=0.5}

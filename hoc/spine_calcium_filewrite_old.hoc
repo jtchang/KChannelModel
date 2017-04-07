@@ -1,0 +1,114 @@
+
+objref spineheadcai, exptt, apicaltrunkcai, somav, apicaltrunkv, spinev, spineica_hva, shaftica_hva, spineica_lva, shaftica_lva, spinei_kad, shafti_kad, spinei_kap, shafti_kap
+objref distalshaftv, ddshaftv, dddshaftv, proximalshaftv
+spineheadcai= new Vector()
+exptt= new Vector()
+apicaltrunkcai= new Vector()
+somav= new Vector()
+apicaltrunkv= new Vector()
+spinev= new Vector()
+spineica_hva=new Vector()
+shaftica_hva=new Vector()
+spineica_lva=new Vector()
+shaftica_lva=new Vector()
+spinei_kap=new Vector()
+shafti_kap=new Vector()
+spinei_kad=new Vector()
+shafti_kad=new Vector()
+distalshaftv=new Vector()
+ddshaftv= new Vector()
+dddshaftv= new Vector()
+proximalshaftv=new Vector()
+
+
+{exptt.record(&t)}
+{apicaltrunkcai.record(&apicaltrunk[24].cai(0.5))}
+{spineheadcai.record(&Spine[0].head.cai(0.5))}
+{somav.record(&soma.v(0.5))}
+{apicaltrunkv.record(&apicaltrunk[24].v(0.5))}
+{spinev.record(&Spine[0].head.v(0.5))}
+{spineica_lva.record(&Spine[0].head.ica_Ca_LVA(0.5))}
+{spineica_hva.record(&Spine[0].head.ica_Ca_HVA(0.5))}
+{shaftica_lva.record(&apicaltrunk[24].ica_Ca_LVA(0.5))}
+{shaftica_hva.record(&apicaltrunk[24].ica_Ca_HVA(0.5))}
+{spinei_kap.record(&Spine[0].head.ik_kap(0.5))}
+{spinei_kad.record(&Spine[0].head.ik_kad(0.5))}
+{shafti_kap.record(&apicaltrunk[24].ik_kap(0.5))}
+{shafti_kad.record(&apicaltrunk[24].ik_kad(0.5))}
+{proximalshaftv.record(&apicaltrunk[10].v(0.5))}
+{distalshaftv.record(&apicaltrunk[50].v(0.5))}
+{ddshaftv.record(&apicaltrunk[75].v(0.5))}
+{dddshaftv.record(&apicaltrunk[99].v(0.5))}
+
+
+proc gabauncagingtofile() { local i localobj tfil, tempmatrix
+	//print "writing to ", $s1
+	tfil= new File()
+	tfil.wopen($s1)
+	tempmatrix= new Matrix()
+	tempmatrix.resize(exptt.size(), 18)
+	tempmatrix.setcol(0, exptt)
+	tempmatrix.setcol(1, somav)
+	tempmatrix.setcol(2, spinev)
+	tempmatrix.setcol(3, apicaltrunkv)
+	tempmatrix.setcol(4, spineheadcai)
+	tempmatrix.setcol(5, apicaltrunkcai)
+	tempmatrix.setcol(6, spineica_lva)
+	tempmatrix.setcol(7, shaftica_lva)
+	tempmatrix.setcol(8, spineica_hva)
+	tempmatrix.setcol(9, shaftica_hva)
+	tempmatrix.setcol(10, spinei_kap)
+	tempmatrix.setcol(11, shafti_kap)
+	tempmatrix.setcol(12, spinei_kad)
+	tempmatrix.setcol(13, shafti_kap)
+	tempmatrix.setcol(14, proximalshaftv)
+	tempmatrix.setcol(15, distalshaftv)
+	tempmatrix.setcol(16, ddshaftv)
+	tempmatrix.setcol(17, dddshaftv)
+	tempmatrix.fprint(0, tfil, " %g")
+
+	tfil.close()
+}
+
+ func createdirectory() { 
+	//print "Making sure ", $s1, " exists"
+	
+	strdef prevDir,TargetDir, cmdstr
+	prevDir= getcwd()
+	TargetDir="DATA"
+	chdir(TargetDir)
+	sprint(cmdstr, "system(\"if not exist %s mkdir %s\")", $s1, $s1)
+	execute(cmdstr)
+	//print "created ", $s1
+	chdir(prevDir)
+	
+	return 1
+}
+
+ func subdirectorycreate() { 
+	//print "Making sure ", $s1, " exists"
+	//$s1 is a path of files
+	
+	strdef prevDir,  cmdstr, directoriesToBeMade, makeDirectory
+	//objref strobj
+	//strobj= new StringFunctions()
+	prevDir = getcwd() // save
+	
+	sprint(directoriesToBeMade, "%s",$s1) // store our targets to be made
+
+	while (strcmp(directoriesToBeMade, ""))	{
+		strobj.head(directoriesToBeMade, "/", makeDirectory)
+		print "making ", makeDirectory
+		sprint(cmdstr, "system(\"if not exist %s mkdir %s\")", makeDirectory, makeDirectory)
+		execute(cmdstr)
+		
+		strobj.tail(directoriesToBeMade, "/", directoriesToBeMade)
+		chdir(makeDirectory)
+	}
+		
+	chdir(prevDir) // when we're done return to our original directory
+	
+	return 1
+}
+
+

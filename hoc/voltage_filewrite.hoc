@@ -1,0 +1,76 @@
+
+
+objref exptvt, somav, spinev, apicaltrunkv, distalshaftv, ddshaftv, dddshaftv, proximalshaftv
+
+exptvt= new Vector()
+somav=new Vector()
+apicaltrunkv=new Vector()
+distalshaftv=new Vector()
+ddshaftv= new Vector()
+dddshaftv= new Vector()
+proximalshaftv=new Vector()
+
+
+
+expvtt.record(&t)
+
+somav.record(&soma.v(0.5))
+apicaltrunkv.record(&apicaltrunk[24].v(0.5))
+spinev.record(&Spine[0].head.v(0.5))
+spineica_lva.record(&Spine[0].head.ica_Ca_LVA(0.1))
+spineica_hva.record(&Spine[0].head.ica_Ca_HVA(0.1))
+shaftica_lva.record(&apicaltrunk[24].ica_Ca_LVA(0.1))
+shaftica_hva.record(&apicaltrunk[24].ica_Ca_HVA(0.1))
+spinei_kap.record(&Spine[0].head.ik_kap(0.1))
+spinei_kad.record(&Spine[0].head.ik_kad(0.1))
+shafti_kap.record(&apicaltrunk[24].ik_kap(0.1))
+shafti_kad.record(&apicaltrunk[24].ik_kad(0.1))
+proximalshaftv.record(&apicaltrunk[10].v(0.5))
+distalshaftv.record(&apicaltrunk[50].v(0.5))
+ddshaftv.record(&apicaltrunk[75].v(0.5))
+dddshaftv.record(&apicaltrunk[99].v(0.5))
+
+
+proc gabauncagingtofile() { local i localobj tfil, tempmatrix
+	print "writing to ", $s1
+	tfil= new File()
+	tfil.wopen($s1)
+	tempmatrix= new Matrix()
+	tempmatrix.resize(exptt.size(), 18)
+	tempmatrix.setcol(0, exptt)
+	tempmatrix.setcol(1, somav)
+	tempmatrix.setcol(2, spinev)
+	tempmatrix.setcol(3, apicaltrunkv)
+	tempmatrix.setcol(4, spineheadcai)
+	tempmatrix.setcol(5, apicaltrunkcai)
+	tempmatrix.setcol(6, spineica_lva)
+	tempmatrix.setcol(7, shaftica_lva)
+	tempmatrix.setcol(8, spineica_hva)
+	tempmatrix.setcol(9, shaftica_hva)
+	tempmatrix.setcol(10, spinei_kap)
+	tempmatrix.setcol(11, shafti_kap)
+	tempmatrix.setcol(12, spinei_kad)
+	tempmatrix.setcol(13, shafti_kap)
+	tempmatrix.setcol(14, proximalshaftv)
+	tempmatrix.setcol(15, distalshaftv)
+	tempmatrix.setcol(16, ddshaftv)
+	tempmatrix.setcol(17, dddshaftv)
+	tempmatrix.fprint(0, tfil, " %g")
+
+	tfil.close()
+}
+
+func createdirectory() { 
+	print "Making sure ", $s1, " exists"
+	
+	strdef prevDir,TargetDir, cmdstr
+	prevDir= getcwd()
+	TargetDir="DATA"
+	chdir(TargetDir)
+	sprint(cmdstr, "system(\"mkdir %s\")", $s1)
+	execute(cmdstr)
+	print "created ", $s1
+	chdir(prevDir)
+	
+	return 1
+}

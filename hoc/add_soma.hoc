@@ -1,0 +1,21 @@
+// add_soma.hoc
+//from Chiu et al. 2013
+
+create soma
+
+soma insert pas
+soma e_pas(0.5)=-65
+
+proc big_soma() {
+  soma {L=13 diam=30}
+  print "(Mainen, Sejnowski 1996) Cell soma area is ",soma.L*soma.diam*PI
+}
+proc small_soma() {
+  soma {L=7.4 diam=14.8}
+  print "(NeuroMorpho.org BC126) Cell soma area is ",soma.L*soma.diam*PI
+}
+proc micro_soma() {
+  soma {L=1e-6 diam=1e-6}
+  print "Cell soma area is ",soma.L*soma.diam*PI
+}
+

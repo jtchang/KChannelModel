@@ -1,0 +1,56 @@
+//this file will add our probe spine to the dendrite
+
+objref tmpsr_slave
+objref slavespine_ref[400]
+apicaltrunk[24] tmpsr_slave=new SectionRef()
+// now tmpsr refers (pointer) to the dendrite section
+
+for i=0, 99 {
+	apicaltrunk[i] tmpsr_slave=new SectionRef() // use 
+	adjacent_shaft_x_loc= 0.125
+	slavespine_ref[i*4] = new Spine(tmpsr_slave, adjacent_shaft_x_loc)
+	print "adjacent dendritic shaft x location = ", adjacent_shaft_x_loc
+	adjacent_shaft_x_loc= 0.375
+	slavespine_ref[i*4+1] = new Spine(tmpsr_slave, adjacent_shaft_x_loc)
+	print "adjacent dendritic shaft x location = ", adjacent_shaft_x_loc
+	adjacent_shaft_x_loc= 0.725
+	slavespine_ref[i*4+2] = new Spine(tmpsr_slave, adjacent_shaft_x_loc)
+	print "adjacent dendritic shaft x location = ", adjacent_shaft_x_loc
+	adjacent_shaft_x_loc= 0.875
+	slavespine_ref[i*4+3] = new Spine(tmpsr_slave, adjacent_shaft_x_loc)
+	print "adjacent dendritic shaft x location = ", adjacent_shaft_x_loc
+}
+
+// spine geometry
+
+forsec "neck" { diam =.1 L=1 }
+forsec "head" { diam=1 L=1 insert kv insert na insert kad }
+
+proc MatchSlaveSpineToNeighboringShaft() {
+
+for i=0, 99 {
+	
+	slavespine_ref[i*4].head {
+		gbar_na=apicaltrunk[i].gbar_na
+		gbar_kv=apicaltrunk[i].gbar_kv
+		gbar_kad+apicaltrunk[i].gbar_kad
+	}
+	slavespine_ref[i*4+1] {
+		gbar_na=apicaltrunk[i].gbar_na
+		gbar_kv=apicaltrunk[i].gbar_kv
+		gbar_kad+apicaltrunk[i].gbar_kad
+	}
+	slavespine_ref[i*4+2]{
+		gbar_na=apicaltrunk[i].gbar_na
+		gbar_kv=apicaltrunk[i].gbar_kv
+		gbar_kad+apicaltrunk[i].gbar_kad
+	}
+	slavespine_ref[i*4+3] {
+		gbar_na=apicaltrunk[i].gbar_na
+		gbar_kv=apicaltrunk[i].gbar_kv
+		gbar_kad+apicaltrunk[i].gbar_kad
+	}
+}
+
+
+}

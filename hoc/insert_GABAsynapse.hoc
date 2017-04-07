@@ -1,0 +1,133 @@
+
+objref inhibitory[1000], inhib_exp2syn[1000]
+
+objref isyn_list, i_exp2syn_list
+objref spine_head_inhib, spine_head_excite, adj_dend_inhib, adj_dend_excite
+
+isyn_list = new List() // stores trapezoidal inhib syns
+i_exp2syn_list = new List()
+
+isyn=0 // indicies for about to be newly created synaptic point processes
+esyn=0 // these excitatory and inhibitory synapses are trapezoidal
+i_exp2syn = 0  // indicies for Exp2Syn type inhibitory synapses
+// indicies for Exp2SynCur type inhibitory synapses
+
+//print "\ninhibitory synapses!"
+// *** trapezoidal synapses ***
+apicaltrunk[24]   {
+    location = 0.5 // initially 181/L
+    inhibitory[isyn] = new ZoidSyn(0.5)    //new ZoidSyn(191/L)
+      ////print "position x=",adjacent_shaft_x_loc,", ", secname(),", inhibitory[", isyn,"] located at approx. ",L*location, " microns."
+    isyn_list.append(inhibitory[isyn])
+    inhibitory[isyn].e=-70 // our default for an inhibitory synapse
+    inhibitory[isyn].trf = 1
+    inhibitory[isyn].interval = 3
+    isyn=isyn+1
+}
+forsec "head"  {
+  for (x,0) {
+    location=x
+    inhibitory[isyn] = new ZoidSyn(location)    
+      //print "position x=",x,", ", secname(),", inhibitory[", isyn,"] located at approx. ",L*location, " microns."
+    isyn_list.append(inhibitory[isyn])
+    if (!strcmp(secname(),"Spine[2].head")) {
+      spine_head_inhib = inhibitory[isyn]
+      //print "specially created variables:"
+      //print "spine_head_inhib=inhibitory[",isyn,"]"
+    }
+    inhibitory[isyn].e=-70 // our default for an inhibitory synapse
+    inhibitory[isyn].trf = 1
+    inhibitory[isyn].interval = 3
+    isyn=isyn+1
+  }
+}
+
+// *** Exp2Syn *** synapses based on a global ipsc recorded by Chiu
+
+// First setup a NetStim to stimulate any number of Exp2Syn's
+
+objref ns
+ns=new NetStim(0.5) 
+
+ns.start=85
+ns.interval=15
+ns.number=1
+
+// the same netstim can stimulate any number of synapses (fan out)
+// (one NetStim to target many synapses)
+
+// NC: reserve a 1000 NetCon's (which connect the NetStim to the Exp2Syn's)
+// NCcuranother 1000 for NetStim to Exp2SynCur's
+objref NC[1000], NCcur[1000]
+// let isyn match between the NetCon and Exp2Syn.  This means that some
+// array elements NC[i] will not be used.
+objref spine_head_exp2syn_inhib // extra handle to exp2syn
+objref spine_head_exp2syncur_inhib // extra handle to exp2syncur
+apicaltrunk[24]  {
+    location=adjacent_shaft_x_loc // initially 181/L
+    // Creating the Exp2Syn synapse and assigning it's default parameters
+    inhib_exp2syn[i_exp2syn] = new Exp2Syn(location)    
+      //print "Exp2Syn position x=",adjacent_shaft_x_loc,", ", secname(),", inhib_exp2syn[", i_exp2syn,"] located at approx. ",L*location, " microns."
+    i_exp2syn_list.append(inhib_exp2syn[i_exp2syn])
+    NC[i_exp2syn] = new NetCon(ns,     inhib_exp2syn[i_exp2syn], 0.5  ,     1    , 0) // 0 weight in uS
+    // docum. netcon = new NetCon(source, target,              threshold, delay, weight)
+    inhib_exp2syn[i_exp2syn].e = -70
+    // result of optimization 20120506
+    inhib_exp2syn[i_exp2syn].tau1 = 5.1075381 
+    inhib_exp2syn[i_exp2syn].tau2 = 73.879924 
+    i_exp2syn=i_exp2syn+1
+
+}
+forsec "head"  {
+  for (x,0) {
+    location=x
+    // setup the Exp2Syn synapses
+    inhib_exp2syn[i_exp2syn] = new Exp2Syn(location)    
+      //print "Exp2Syn position x=",x,", ", secname(),", inhib_exp2syn[", i_exp2syn,"] located at ",L*location, " microns."
+    i_exp2syn_list.append(inhib_exp2syn[i_exp2syn])
+    if (!strcmp(secname(),"Spine[2].head")) {
+      spine_head_exp2syn_inhib = inhib_exp2syn[i_exp2syn]
+      //print "specially created variables:"
+      //print "spine_head_exp2syn_inhib=inhib_exp2syn[",i_exp2syn,"]"
+    }
+    NC[i_exp2syn] = new NetCon(ns,     inhib_exp2syn[i_exp2syn], 0.5  ,     1    , 0) // 0 weight in uS
+    // docum. netcon = new NetCon(source, target,              threshold, delay, weight)
+    inhib_exp2syn[i_exp2syn].e = -70
+    // result of optimization 20120506
+    inhib_exp2syn[i_exp2syn].tau1 = 5.1075381 
+    inhib_exp2syn[i_exp2syn].tau2 = 73.879924 
+    i_exp2syn=i_exp2syn+1
+    
+    
+  }
+}
+
+//print isyn_list.count," trapezoidal created"
+//print i_exp2syn_list.count, " exp2syn created"
+
+for i=0, isyn_list.count()-1 {
+ isyn_list.o(i).g=0  // start out with no inhibitory conductance however then below
+}
+// note that the NetCon weights were already set to zero. These can be set with NC[i_exp2syn].weight
+x_value=0
+
+//isyn_=0
+//xpanel("Exp2Syn Synaptic Stimulation Control")
+//  xlabel("NetStim NetCon")
+//  xvalue("ns.interval")
+//  xvalue("ns.number")
+ // xvalue("ns.start")
+//  xvalue("ns.noise")
+//  xlabel("above are NetStim, below is NetCon values")
+//  xlabel("turn synapse OFF or ON by setting below NetCon to 0.0004 uS")
+//  xlabel("AND setting above ns.number to non-zero value")
+//  xvalue("NC[isyn_].weight")
+//  xvalue("isyn_")
+//  xlabel("Exp2Syn GABA_A (for isyn_ value=compartment:")
+//  xlabel("0=dendrite, 1=Spine[0], 2=Spine[1], 3=Spine[2]")
+//  xlabel("dendrite compartment initialized to near Spine[1])")
+//  xvalue("inhib_exp2syn[isyn_].tau1")
+//  xvalue("inhib_exp2syn[isyn_].tau2")
+//  xvalue("inhib_exp2syn[isyn_].e")
+//xpanel()
+

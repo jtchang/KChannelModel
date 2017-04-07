@@ -1,0 +1,40 @@
+proc RunGABAInhibShaft() {
+
+		//$s1: pathname
+		//$s2: GABA syn strength
+
+		//print "Running GABA inhibition and writing to path ", $s1
+		//createdirectory($s1)
+		strdef path_write
+		sprint(path_write, "DATA/%s", $s1)
+		
+		subdirectorycreate(path_write)
+		strdef writepath
+		
+		
+	
+		//print "Running Uninhibited bap..."
+		MultIClamp[0].number=1
+		NC[1].weight=0
+		NC[0].weight=0
+		run()
+		sprint(writepath, "DATA/%s%s", $s1, "controlbapShaft.dat")
+		gabauncagingtofile(writepath)
+	
+		
+		//print "Running Inhibited bap..."
+		NC[0].weight=$2
+		run()
+		sprint(writepath, "DATA/%s%s", $s1, "inhibbapShaft.dat")
+		gabauncagingtofile(writepath)
+
+		//print "Running Inhibition"
+		MultIClamp[0].number=0
+		run()
+		sprint(writepath, "DATA/%s%s", $s1, "inhibShaft.dat")
+		gabauncagingtofile(writepath)
+		MultIClamp[0].number=1
+		
+		
+
+}

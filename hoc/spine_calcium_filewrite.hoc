@@ -1,0 +1,95 @@
+
+objref exptt, somav, dendv, spinev, dendca, spineca, dendna, dendkv,dendkad,dendpas,dendsyn, dendica
+
+exptt= new Vector()
+somav= new Vector()
+dendv= new Vector()
+spinev= new Vector()
+dendca= new Vector() 
+spineca= new Vector() 
+dendna= new Vector() 
+dendkv= new Vector()
+dendkad= new Vector()
+dendpas= new Vector()
+dendsyn= new Vector()
+dendica= new Vector()
+
+{exptt.record(&t)}
+{somav.record(&soma.v(0.5))}
+{dendv.record(&apicaltrunk[24].v(0.5))}
+{spinev.record(&Spine[0].head.v(0.5))}
+{dendca.record(&apicaltrunk[24].cai(0.5))}
+{spineca.record(&Spine[0].head.v(0.5))}
+{dendna.record(&apicaltrunk[24].gna_na(0.5))}
+{dendkv.record(&apicaltrunk[24].gk_kv(0.5))}
+{dendkad.record(&apicaltrunk[24].gka_kad(0.5))}
+{dendpas.record(&apicaltrunk[24].g_pas(0.5))}
+{dendsyn.record(&Exp2Syn[0].g)}
+{dendica.record(&apicaltrunk[24].ica(0.5))}
+
+proc gabauncagingtofile() { local i localobj tfil, tempmatrix
+	//print "writing to ", $s1
+	tfil=new File()
+  tfil.wopen($s1)
+  tempmatrix=new Matrix()
+	tempmatrix.resize(exptt.size(),12)
+	
+	tempmatrix.setcol(0, exptt)
+	tempmatrix.setcol(1, somav)
+	tempmatrix.setcol(2, dendv)
+	tempmatrix.setcol(3, spinev)
+	tempmatrix.setcol(4, dendca)
+	tempmatrix.setcol(5, spineca)
+	tempmatrix.setcol(6, dendna)
+	tempmatrix.setcol(7, dendkv)
+	tempmatrix.setcol(8, dendkad)
+	tempmatrix.setcol(9, dendpas)
+	tempmatrix.setcol(10, dendsyn)
+	tempmatrix.setcol(11, dendica)
+	tempmatrix.fprint(0, tfil, " %g")
+	
+	tfil.close()
+}
+
+ func createdirectory() { 
+	//print "Making sure ", $s1, " exists"
+	
+	strdef prevDir,TargetDir, cmdstr
+	prevDir= getcwd()
+	TargetDir="DATA"
+	chdir(TargetDir)
+	sprint(cmdstr, "system(\"if not exist %s mkdir %s\")", $s1, $s1)
+	execute(cmdstr)
+	//print "created ", $s1
+	chdir(prevDir)
+	
+	return 1
+}
+
+ func subdirectorycreate() { 
+	//print "Making sure ", $s1, " exists"
+	//$s1 is a path of files
+	
+	strdef prevDir,  cmdstr, directoriesToBeMade, makeDirectory
+	//objref strobj
+	//strobj= new StringFunctions()
+	prevDir = getcwd() // save
+	
+	sprint(directoriesToBeMade, "%s",$s1) // store our targets to be made
+
+	while (strcmp(directoriesToBeMade, ""))	{
+		strobj.head(directoriesToBeMade, "/", makeDirectory)
+		print "making ", makeDirectory
+		sprint(cmdstr, "system(\"if not exist %s mkdir %s\")", makeDirectory, makeDirectory)
+		execute(cmdstr)
+		
+		strobj.tail(directoriesToBeMade, "/", directoriesToBeMade)
+		chdir(makeDirectory)
+	}
+		
+	chdir(prevDir) // when we're done return to our original directory
+	
+	return 1
+}
+
+

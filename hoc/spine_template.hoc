@@ -1,0 +1,103 @@
+begintemplate Spine
+  public neck, head, ps
+  // neck and head are the NEURON sections of the spine
+  // ps: a psection (print section) proc that prints
+  // the spine head, neck, and neck's parent mechanisms
+  // with the psection() command in those accessed sections.
+  public Ra, Rm, C, g_pas
+  // passive properties
+  // note that g_pas is set to 1/Rm
+
+  objref secref
+  create neck, head
+// note: it is not necessary to create section lists of spines, head, or necks
+// because all spines can be accessed with
+// forsec "Spine" { }
+// and all heads can be accessed with
+// forsec "head" { }
+// and all necks can be accessed with
+// forsec "neck" { }
+
+// init creates the morphology of the spine
+  proc init() {
+
+    if ((numarg()==6) || (numarg()==2)) {
+    create neck, head
+    neck {L=0.43 diam=0.2 } // default to Harris et al. 1992 table 4, mushroom
+    head {L=1.07 diam=0.61}
+    }
+    if (numarg()==6) {
+     neck {L=$3 diam=$4 }
+     head {L=$5 diam=$6}
+    } else if (numarg()!=2) {
+     print "Error: number of arguments to Spine init() was ",numarg()," and should have been 2 or 6"
+     print "Usage:"
+     print "create dend // a dendrite process (shaft, cylinder, frustrum, etc.)"
+     print "objref tmpSectionRef"
+     print "dend tmpSectionRef=new SectionRef()"
+     print "objref spineref"
+     print "spineref=new Spine(tmpSectionRef, x_dend_location, neck_length=.43, neck_diameter=.2, \ "
+     print "head_length=1.07, head_diam=0.61)"
+     print "// if 2 arguments passed then mushroom spine dimensions from Harris et al. 1992 table 4 params"
+     print "// Above variables listed with their default values"
+     print "// - in actuality just pass numbers, not variables and equal signs!"
+   }
+    secref=$o1
+    secref.sec connect neck(0),$2
+    neck connect head(0), 1
+    // neck.diam=0.0394  // note this is overriding the default of 0.2 from Harris
+                      // and may be overwritten if a neck diameter is passed for
+                      // the initialization of this object.    
+
+    set_passive_prop()
+}
+
+proc set_passive_prop() {
+
+    // copied from iniparameter.hoc modeldb accession num 116769
+    // Grunditz et al. 2008 and Mainen et al. 1995.
+    /********************************************************************
+    initialize basic parameters                    
+    *************************************************/
+// not used:    celsius = 30        /* temperature */
+// not used:    v_init=-65
+    global_ra=200 // use Mainen et al. 1995 200 instead of 150.00 /* internal resistivity in ohm-cm */
+    Cm=0.75             /* specific membrane capacitance in uF/cm^2 */
+    Rm=40000            /* specific membrane resistivity in ohm-cm^2 */ 
+    Vleak=-65           /* leak reversal -65mV */
+// not used:    Vrest=-65           /* resting potential -64.6 mV*/
+// not used:    spinelimit=100      /* distance beyond which to modify for spines */
+    spinefactor=2.0     /* factor by which to change passive properties */
+    // sometimes a spinefactor is used to increase the effective
+    // membrane for the case where spines are not explicitly
+    // represented.  Here, as in Grunditz, spinefactor increases the
+    // effective membrane area (by being multiplied into the
+    // conductances and capacitance) in addition to the spine being
+    // explicitly represented.
+
+// not used:    isegfactor=100
+// not used:    isegfrac=0.8
+
+/********************************************************************
+procedure to insert and initialize channels    
+*************************************************/
+//...
+    forall {insert pas  g_pas=1/(Rm)  Ra=global_ra  e_pas=Vleak 
+    }
+    head {
+      insert pas e_pas=Vleak  g_pas=spinefactor/Rm  Ra=global_ra  cm=spinefactor*Cm
+    }
+    neck {
+      insert pas e_pas=Vleak  g_pas=spinefactor/Rm  Ra=global_ra  cm=spinefactor*Cm 
+    }
+}
+ 
+  proc ps() {
+    print "*** The spine sections:"
+    neck psection()
+    head psection()
+    print "*** has parent section:"
+    secref.sec psection()
+  }
+endtemplate Spine
+

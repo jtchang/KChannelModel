@@ -1,0 +1,64 @@
+proc optimize_IClamp() {local lastV, lastI, margin, niterations, delta, i
+	//$1 : target V
+	//$2 : maximum number of iterations to run
+	//$3 : +/- how many mV from target we'll live with
+	
+	//We'll turn off multiclamp[0]
+	MultIClamp[0].number=0
+	margin=$3
+	targetV=$1
+	niterations=$2
+	lastV=0
+	lastI=0
+	delta=0.0003
+	//Setup our steady current injection
+	IClamp[0].del=0
+	IClamp[0].dur=1000
+	NC.weight=0
+	delta=abs(IClamp[0].amp)
+	IClamp[0].amp=0
+	tstop=500 //run a shorter simulation
+	
+	// This is a pretty poor search 
+	for i=1,niterations {
+
+		run()
+		//print IClamp[0].amp
+		lastI=IClamp[0].amp
+		if(abs(soma.v(0.5)-targetV) <= margin && somav.max() < -40 ) {// if our cell settles  within a mV of our target V and doesn't spike before
+			//print "Found Stable Current Inj: ", IClamp[0].amp
+			print "Cell Clamped to ", soma.v(0.5), " mV"
+			print "Ran ", i, " iterations"
+			break	
+		} else if (somav.max() > -40 ){  // just one more check that our target doesn't spike if it doesn't we should lower the injected current
+			//print "Somehow our cell is still spiking"
+			IClamp[0].amp=lastI - delta
+			
+		} else if (soma.v(0.5)-targetV < 0){  // if our cell is  hyperpolarized w.r.t our target  and doesn't spike before
+			IClamp[0].amp=lastI + delta
+			
+		} else if (soma.v(0.5)-targetV > 0 ){  // if our cell is  depolarized w.r.t our target  and doesn't spike before
+			IClamp[0].amp=lastI - delta
+			
+		} 
+		delta=delta/2
+		print "injected ", lastI, "pA, held at ", soma.v(0.5), "mV, delta= ", delta, " lastV=", lastV, "soma_max= ", somav.max()
+		
+		
+
+		if (somav.max() < -40) {
+			lastV=soma.v(0.5)
+		} else {
+			lastV=-40
+		}
+		//print lastV
+		if (i==niterations) { //if we don't converge to a stable clamp in the number of iterations we should let the user know
+			//print "No stable clamp was found in ", niterations
+			//print "IClamp reset to 0"  // for safety sake we'll set IClamp back to 0
+			IClamp[0].amp=0 
+			break
+		}
+	}
+	MultIClamp[0].number=1 // Turn back on the multiclamp
+	
+}

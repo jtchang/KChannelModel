@@ -1,0 +1,21 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[11]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,500,0,0.05)
+scene_vector_[8] = save_window_
+{save_window_.view(0, 0.05, 5.0, 120, 223, 271, 300.6, 200.8)}
+flush_list.append(save_window_)
+save_window_.save_name("flush_list.")
+objectvar rvp_
+rvp_ = new RangeVarPlot("n_kap")
+soma rvp_.begin(1)
+apicaltuftNexus rvp_.end(0)
+rvp_.origin(0)
+save_window_.addobject(rvp_, 1, 1, 0.8, 0.9)
+
+}
+objectvar scene_vector_[1]
+{doNotify()}

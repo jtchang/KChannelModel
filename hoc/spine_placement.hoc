@@ -1,0 +1,28 @@
+objref tmpsr
+apicaltrunk[24] tmpsr=new SectionRef()
+// now tmpsr refers (pointer) to the dendrite section
+
+objref spineref[1]
+
+objref spine_location_vec
+spine_location_vec= new Vector()
+
+adjacent_shaft_x_loc = 0 // reassigned to first spine neck dendrite x location
+
+spine_location_vec.append(24) // for 20120709, 20121008
+
+for i=0, spine_location_vec.size()-1 {
+  //print "Placing a spine at ", spine_location_vec.x[i], " microns, which has an x value of ", spine_location_vec.x[i]/dendrite.L
+
+  spineref[i] = new Spine(tmpsr, 0.5)
+  if (i==1) { // prior to 20121008 was set to i==0
+    adjacent_shaft_x_loc = 0.5
+    print "adjacent dendritic shaft x location = ", adjacent_shaft_x_loc
+  }
+}
+
+// spine geometry
+
+forsec "neck" { diam =.1 L=1 }
+forsec "head" { diam=1 L=1 }
+
