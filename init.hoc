@@ -23,7 +23,7 @@ ndend=100
 
 // We'll wire all the pieces from above here because that seems like a good idea
 {connect apicaltrunk[0](0), soma(1)
-connect apicaltuftNexus(0),  apicaltrunk[ndend-1](1)
+connect apicaltuftNexus(0), apicaltrunk[ndend-1](1)
 connect apicaltuftA(0), apicaltuftNexus(1)
 connect apicaltuftB(0), apicaltuftNexus(1)}
 
@@ -99,8 +99,8 @@ strobj= new StringFunctions()
 ///SETTING UP Simulation
 	strdef exptname
 	forall {gbar_Ca_HVA=0}
-	Spine[0].head.gbar_Ca_HVA=0
-	apicaltrunk[24].gbar_Ca_HVA=0
+	Spine[0].head.gbar_Ca_HVA=1e-6
+	apicaltrunk[24].gbar_Ca_HVA=1e-6
 	//Spine[0].head {insert cah}
 	//apicaltrunk[24] {insert cah}
 
@@ -108,8 +108,8 @@ strobj= new StringFunctions()
 	//INSERT SPINE CALCIUM HERE
 	Spine[0].head {insert car}
 	apicaltrunk[24] {insert car }
-	Spine[0].head.pbar_car=1e-4
-	apicaltrunk[24].pbar_car=1e-4
+	Spine[0].head.pbar_car=0
+	apicaltrunk[24].pbar_car=0
 	//Spine[0].head.pbar_cah=1e-3
 	//apicaltrunk[24].pbar_cah=1e-3
 
