@@ -108,8 +108,8 @@ strobj= new StringFunctions()
 	//INSERT SPINE CALCIUM HERE
 	Spine[0].head {insert car}
 	apicaltrunk[24] {insert car }
-	Spine[0].head.pbar_car=1e-4
-	apicaltrunk[24].pbar_car=1e-4
+	Spine[0].head.gcabar_car=1e-6
+	apicaltrunk[24].gcabar_car=1e-6
 	//Spine[0].head.pbar_cah=1e-3
 	//apicaltrunk[24].pbar_cah=1e-3
 
@@ -177,19 +177,14 @@ func fi_ena() { // set params, execute a simulation, analyze and return results
 	Spine[0].head {shift_car = 2 + ($3-1)*10}
 	apicaltrunk[24] {shift_car = 2 + ($3-1)*10}
 	dt=0.005
-	optimize_IClamp(-64, 10000, .0001)
+	optimize_IClamp(-64, 10000, .001)
 	dt=0.005
-	tstop=700	sprint(exptname, "GABAg_5em4/ena/ena_%d/%s_%d/", $1,"shift_car", $3)
-	RunGABAInhibShaft(exptname, 5e-4)
-	tstop=700	sprint(exptname, "GABAg_5em4/ena/ena_%d/%s_%d/", $1,"shift_car", $3)
-	RunGABAInhibShaft(exptname, 6e-4)
-	tstop=700	sprint(exptname, "GABAg_5em4/ena/ena_%d/%s_%d/", $1,"shift_car", $3)
-	RunGABAInhibShaft(exptname, 7e-4)
-	//tstop=700	sprint(exptname, "GABAg_2em3/ena/ena_%d/%s_%d/", $1,"shift_car", $3)
-	//RunGABAInhibShaft(exptname, 2e-3)
-
-	//tstop=700	sprint(exptname, "GABAg_4em3/ena/ena_%d/%s_%d/", $1, "shift_car", $3)
-	//RunGABAInhibShaft(exptname, 4e-3)
+	tstop=700	sprint(exptname, "GABAg_1em3/ena/ena_%d/%s_%d/", $1,"shift_car", $3)
+	RunGABAInhibShaft(exptname, 1e-3)
+	tstop=700	sprint(exptname, "GABAg_2em3/ena/ena_%d/%s_%d/", $1,"shift_car", $3)
+	RunGABAInhibShaft(exptname, 2e-3)
+	tstop=700	sprint(exptname, "GABAg_4em3/ena/ena_%d/%s_%d/", $1, "shift_car", $3)
+	RunGABAInhibShaft(exptname, 4e-3)
 
 	print "Run: ", $1*$3/10, " on Worker:", pc.id, " took ", startsw()-ttrial, "seconds"
 	return IClamp[0].amp
@@ -206,23 +201,19 @@ func fi_gk() { // set params, execute a simulation, analyze and return results
 	MultIClamp[0].amp=1
 	ns.start=485
 
-	setparams($1*10, 0)			// vary our gk
+	setparams($1, 0)			// vary our gk
 	set_ena(60)						// use our default ena of 60
 	Spine[0].head {shift_car = 2 + ($3-1)*10}
 	apicaltrunk[24] {shift_car = 2 + ($3-1)*10}
 
-	optimize_IClamp(-64, 10000, .01)
-	dt=0.025
+	optimize_IClamp(-64, 10000, .001)
+	dt=0.005
 
-	//tstop=700	sprint(exptname, "GABAg_7em4/gk/gk_%d/%s_%d/", $1,"shift_car", $3)
-	//RunGABAInhibShaft(exptname, 7e-4)
-	//tstop=700	sprint(exptname, "GABAg_5em4/gk/gk_%d/%s_%d/", $1,"shift_car", $3)
-	//tstop=700	sprint(exptname, "GABAg_5em4/gk/gk_%d/%s_%d/", $1,"shift_car", $3)
-	//RunGABAInhibShaft(exptname, 5e-4)
 
-	//RunGABAInhibShaft(exptname, 6e-4)
-	//	tstop=700	sprint(exptname, "GABAg_7em4/gk/gk_%d/%s_%d/", $1,"shift_car", $3)
-	//RunGABAInhibShaft(exptname, 7e-4)
+	tstop=700	sprint(exptname, "GABAg_2em3/gk/gk_%d/%s_%d/", $1,"shift_car", $3)
+	RunGABAInhibShaft(exptname, 2e-3)
+	tstop=700	sprint(exptname, "GABAg_1em3/gk/gk_%d/%s_%d/", $1,"shift_car", $3)
+	RunGABAInhibShaft(exptname, 1e-3)
 	tstop=700	sprint(exptname, "GABAg_4em3/gk/gk_%d/%s_%d/", $1,"shift_car", $3)
 	RunGABAInhibShaft(exptname, 4e-3)
 
@@ -266,7 +257,7 @@ proc batchrun() { local ii, jj, tmp
 }
 
 //bactchrun(20,20,40,40)
-batchrun(50,70, 1, 10)
+batchrun(58,80, 10, 100)
 
 { pc.done() }
 
