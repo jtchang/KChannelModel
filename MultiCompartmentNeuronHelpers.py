@@ -342,7 +342,7 @@ def load_gk_data():
     path_super="data/GABAg_4em3/gk/gk_%s/shift_%s/"
     gk_start=10
 
-    gk_stop=80
+    gk_stop=70
     gk_test={}
     gk_test["car_1"]={}
 
@@ -383,16 +383,16 @@ def make_figure(ena, gk):
     ax1.plot(gk["car_1"]["RawData"][gk_index]["uninhibitedbAP"].time,gk["car_1"]["RawData"][gk_index]["uninhibitedbAP"].dendrite_ica/gk["car_1"]["RawData"][gk_index]["uninhibitedbAP"].dendrite_ica.min())
     ax1.plot(gk["car_1"]["RawData"][gk_index]["inhibitedbAP"].time,gk["car_1"]["RawData"][gk_index]["inhibitedbAP"].dendrite_ica/gk["car_1"]["RawData"][gk_index]["uninhibitedbAP"].dendrite_ica.min()
     )
-    #ax1.set_title(title % (ena["car_1"]["ena"][10],gk["car_1"]["gk"][gk_index],gk["car_1"]["CaInh"][gk_index] ))
+    ax1.set_title(title % (ena["car_1"]["ena"][10],gk["car_1"]["gk"][gk_index],gk["car_1"]["CaInh"][gk_index] ))
     ax1.set_xlabel("time (ms)")
     ax1.set_ylabel("Normalized $I_{Ca^{2+}}$ (a.u.)")
     ax1.set_xlim(498,600)
     ax1.set_ylim(0,1)
     format_axis(ax1)
 
-    #ax2.plot(gk["car_1"]["RawData"][40]["uninhibitedbAP"].time,gk["car_1"]["RawData"][40]["uninhibitedbAP"].dendrite_ica/gk["car_1"]["RawData"][40]["uninhibitedbAP"].dendrite_ica.min())
-    #ax2.plot(gk["car_1"]["RawData"][40]["inhibitedbAP"].time,gk["car_1"]["RawData"][40]["inhibitedbAP"].dendrite_ica/gk["car_1"]["RawData"][40]["uninhibitedbAP"].dendrite_ica.min())
-    #ax2.set_title(title % (ena["car_1"]["ena"][10],gk["car_1"]["gk"][40],gk["car_1"]["CaInh"][40] ))
+    ax2.plot(gk["car_1"]["RawData"][30]["uninhibitedbAP"].time,gk["car_1"]["RawData"][30]["uninhibitedbAP"].dendrite_ica/gk["car_1"]["RawData"][30]["uninhibitedbAP"].dendrite_ica.min())
+    ax2.plot(gk["car_1"]["RawData"][30]["inhibitedbAP"].time,gk["car_1"]["RawData"][30]["inhibitedbAP"].dendrite_ica/gk["car_1"]["RawData"][30]["uninhibitedbAP"].dendrite_ica.min())
+    ax2.set_title(title % (ena["car_1"]["ena"][10],gk["car_1"]["gk"][30],gk["car_1"]["CaInh"][30] ))
     ax2.set_xlabel("time (ms)")
     ax2.set_ylabel("Normalized $I_{Ca^{2+}}$ (a.u.)")
     ax2.set_xlim(498,600)
@@ -402,12 +402,12 @@ def make_figure(ena, gk):
 
     ena_index=25
 
-    #ax3.plot(ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].time,ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica/ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica.min())
-    #ax3.plot(ena["car_1"]["RawData"][ena_index]["inhibitedbAP"].time,ena["car_1"]["RawData"][ena_index]["inhibitedbAP"].dendrite_ica/ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica.min())
-    #ax3.set_title(title  % (ena["car_1"]["ena"][ena_index],gk["car_1"]["gk"][40],ena["car_1"]["CaInh"][ena_index] ))
+    ax3.plot(ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].time,ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica/ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica.min())
+    ax3.plot(ena["car_1"]["RawData"][ena_index]["inhibitedbAP"].time,ena["car_1"]["RawData"][ena_index]["inhibitedbAP"].dendrite_ica/ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica.min())
+    ax3.set_title(title  % (ena["car_1"]["ena"][ena_index],gk["car_1"]["gk"][30],ena["car_1"]["CaInh"][ena_index] ))
     ax3.set_xlabel("time (ms)")
     ax3.set_ylabel("Normalized $I_{Ca^{2+}}$ (a.u.)")
-    ax3.set_xlim(498,510)
+    ax3.set_xlim(498,600)
     ax3.set_ylim(0,1)
     format_axis(ax3)
 
@@ -416,16 +416,16 @@ def make_figure(ena, gk):
     ax4.plot(ena["car_1"]["ena"],ena["car_1"]["VBl"], 'g')
     ax4.set_xlabel("$E_{Na}$ (mV)")
     ax4.set_ylabel("Peak Voltage (mV)")
-    ax4.set_xlim(49,76)
-    ax4.set_ylim(-70,10)
+    ax4.set_xlim(45,85)
+    ax4.set_ylim(-70,25)
     format_axis(ax4)
 
 
     ax5.plot(ena["car_1"]["ena"], ena["car_1"]["CaInh"], 'ko', ms=5)
     ax5.set_xlabel("$E_{Na}$ (mV)")
     ax5.set_ylabel("Calcium Inhibition (%)")
-    ax5.set_xlim(49,76)
-    ax5.set_ylim(-30, -15)
+    ax5.set_xlim(45,85)
+    ax5.set_ylim(-45, -15)
     format_axis(ax5)
 
 
@@ -434,15 +434,15 @@ def make_figure(ena, gk):
     ax6.plot(gk["car_1"]["gk"],gk["car_1"]["VBl"], 'g')
     ax6.set_xlabel("$\\bar{g}_{KAD}$ ($mS/cm^2$)")
     ax6.set_ylabel("Peak Voltage (mV)")
-    ax6.set_xlim(2,25)
-    ax6.set_ylim(-70,10)
+    #ax6.set_xlim(0,20)
+    #ax6.set_ylim(-70,25)
     format_axis(ax6)
 
     ax7.plot(gk["car_1"]["gk"], gk["car_1"]["CaInh"], 'wo', ms=5)
     ax7.set_xlabel("$\\bar{g}_{KAD}$ ($mS/cm^2$)")
     ax7.set_ylabel("Calcium Inhibition(%)")
-    ax7.set_xlim(2,25)
-    ax7.set_ylim(-30,-15)
+    ax7.set_xlim(0,20)
+    ax7.set_ylim(-45,-15)
     format_axis(ax7)
 
 
@@ -453,14 +453,16 @@ def make_figure(ena, gk):
     ax1a.plot(ena["car_1"]["VPkU"],ena["car_1"]["CaInh"], 'ko', ms=5)
     ax1a.set_xlabel("Uninhibited AP Peak Voltage (mV)")
     ax1a.set_ylabel("Calcium Inhibition(%)")
-    #ax1a.set_ylim(-30, -15)
+    ax1a.set_ylim(-45, -15)
+    ax1a.set_xlim(0, 25)
     format_axis(ax1a)
 
     ax2a.plot(gk["car_1"]["AP_widthU"],gk["car_1"]["CaInh"], 'wo', ms=5, label="$\\bar{g}_{KAD}$")
     ax2a.plot(ena["car_1"]["AP_widthU"],ena["car_1"]["CaInh"], 'ko', ms=5, label="$E_{Na}$")
     ax2a.set_xlabel("AP FWHM (ms)")
     ax2a.set_ylabel("Calcium Inhibition(%)")
-    #ax2a.set_ylim(-30, -15)
+    ax2a.set_ylim(-45, -15)
+    ax2a.set_xlim(2.0, 3.4)
     format_axis(ax2a)
 
     ax2a.legend(loc='center left', bbox_to_anchor=(1, 0.5), numpoints=1, frameon=False)
