@@ -30,7 +30,7 @@ PARAMETER {
 	pw=-1    (1)
 	tq=-40 (mV)
 	qq=5  (mV)
-	q10=5 
+	q10=5
 	qtl=1
         nscale=1
         lscale=1
@@ -53,11 +53,11 @@ STATE {
 ASSIGNED {
 	ik (mA/cm2)
         ninf
-        linf      
+        linf
         taul   (ms)
         taun   (ms)
         gka    (mho/cm2)
-        qt     
+        qt
 }
 
 INITIAL {
@@ -66,7 +66,7 @@ INITIAL {
         l=linf
         gka = gbar*n*l
 	ik = gka*(v-ek)
-}        
+}
 
 BREAKPOINT {
 	SOLVE states METHOD cnexp
@@ -83,21 +83,21 @@ DERIVATIVE states {
 FUNCTION alpn(v(mV)) {
 LOCAL zeta
   zeta=zetan+pw/(1+exp((v-tq)/qq))
-  alpn = exp(1.e-3*zeta*(v-vhalfn)*9.648e4 (degC/mV)/(8.315*(273.16+celsius))) 
+  alpn = exp(1.e-3*zeta*(v-vhalfn)*9.648e4 (degC/mV)/(8.315*(273.16+celsius)))
 }
 
 FUNCTION betn(v(mV)) {
 LOCAL zeta
   zeta=zetan+pw/(1+exp((v-tq)/qq))
-  betn = exp(1.e-3*zeta*gmn*(v-vhalfn)*9.648e4 (degC/mV)/(8.315*(273.16+celsius))) 
+  betn = exp(1.e-3*zeta*gmn*(v-vhalfn)*9.648e4 (degC/mV)/(8.315*(273.16+celsius)))
 }
 
 FUNCTION alpl(v(mV)) {
-  alpl = exp(1.e-3*zetal*(v-vhalfl)*9.648e4 (degC/mV)/(8.315*(273.16+celsius))) 
+  alpl = exp(1.e-3*zetal*(v-vhalfl)*9.648e4 (degC/mV)/(8.315*(273.16+celsius)))
 }
 
 FUNCTION betl(v(mV)) {
-  betl = exp(1.e-3*zetal*gml*(v-vhalfl)*9.648e4 (degC/mV)/(8.315*(273.16+celsius))) 
+  betl = exp(1.e-3*zetal*gml*(v-vhalfl)*9.648e4 (degC/mV)/(8.315*(273.16+celsius)))
 }
 LOCAL facn,facl
 
@@ -129,17 +129,3 @@ PROCEDURE rates(v (mV)) { :callable from hoc
 	if (taul<lmin/qtl) {taul=lmin/qtl}
         facl = (1 - exp(-dt/taul))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,0 +1,45 @@
+
+
+# Create Our Figure Layout
+  fig1 = plt.figure(1, figsize=[9,9])
+  ax1=plt.subplot2grid((3,12), (0,0), colspan=4)
+  ax2=plt.subplot2grid((3,12), (0,4), colspan=4)
+  ax3=plt.subplot2grid((3,12), (0,8), colspan=4)
+
+  ax4=plt.subplot2grid((3,12), (1,0), colspan=3)
+  ax5=plt.subplot2grid((3,12), (1,3), colspan=3)
+
+  ax6=plt.subplot2grid((3,12), (1,6), colspan=3)
+  ax7=plt.subplot2grid((3,12), (1,9), colspan=3)
+
+  title="ENA= %d mV \n gK=%f mS/cm2 \n Ca Inh= %f (%%)"
+  gk_index=0
+  ax1.plot(gk["car_1"]["RawData"][gk_index]["uninhibitedbAP"].time,gk["car_1"]["RawData"][gk_index]["uninhibitedbAP"].dendrite_ica)#)/gk["car_1"]["RawData"][gk_index]["uninhibitedbAP"].dendrite_ica.min())
+  ax1.plot(gk["car_1"]["RawData"][gk_index]["inhibitedbAP"].time,gk["car_1"]["RawData"][gk_index]["inhibitedbAP"].dendrite_ica)#/gk["car_1"]["RawData"][gk_index]["uninhibitedbAP"].dendrite_ica.min())
+  ax1.set_title(title % (ena["car_1"]["ena"][10],gk["car_1"]["gk"][gk_index],gk["car_1"]["CaInh"][gk_index] ))
+  ax1.set_xlabel("time (ms)")
+  ax1.set_ylabel("Normalized $I_{Ca^{2+}}$ (a.u.)")
+  ax1.set_xlim(498,600)
+  #ax1.set_ylim(0,1)
+  format_axis(ax1)
+
+  ax2.plot(gk["car_1"]["RawData"][30]["uninhibitedbAP"].time,gk["car_1"]["RawData"][30]["uninhibitedbAP"].dendrite_ica)#/gk["car_1"]["RawData"][30]["uninhibitedbAP"].dendrite_ica.min())
+  ax2.plot(gk["car_1"]["RawData"][30]["inhibitedbAP"].time,gk["car_1"]["RawData"][30]["inhibitedbAP"].dendrite_ica)#/gk["car_1"]["RawData"][30]["uninhibitedbAP"].dendrite_ica.min())
+  ax2.set_title(title % (ena["car_1"]["ena"][10],gk["car_1"]["gk"][30],gk["car_1"]["CaInh"][30] ))
+  ax2.set_xlabel("time (ms)")
+  ax2.set_ylabel("Normalized $I_{Ca^{2+}}$ (a.u.)")
+  ax2.set_xlim(498,600)
+  #ax2.set_ylim(0,1)
+  format_axis(ax2)
+
+
+  ena_index=25
+
+  ax3.plot(ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].time,ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica)#/ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica.min())
+  ax3.plot(ena["car_1"]["RawData"][ena_index]["inhibitedbAP"].time,ena["car_1"]["RawData"][ena_index]["inhibitedbAP"].dendrite_ica)#/ena["car_1"]["RawData"][ena_index]["uninhibitedbAP"].dendrite_ica.min())
+  ax3.set_title(title  % (ena["car_1"]["ena"][ena_index],gk["car_1"]["gk"][30],ena["car_1"]["CaInh"][ena_index] ))
+  ax3.set_xlabel("time (ms)")
+  ax3.set_ylabel("Normalized $I_{Ca^{2+}}$ (a.u.)")
+  ax3.set_xlim(498,600)
+  #ax3.set_ylim(0,1)
+  format_axis(ax3)

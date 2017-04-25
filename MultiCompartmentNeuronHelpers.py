@@ -1,4 +1,4 @@
-""" @package MultiCompartmentNeuronHelpers
+ap""" @package MultiCompartmentNeuronHelpers
     This package contains helper functions for handling data output from NEURON simulations as found in Chang & Higley (2016).
 
 
@@ -221,17 +221,16 @@ def AP_FWHM(X,Y):
         if sign(d[i]) != sign(d[i+1]):
             if j==0:
                 j=1
-
                 y_t=(d[i+1]-d[i])/(X[i+1]-X[i])
                 x0= d[i]/y_t
                 left_x= x0+X[i]
             else:
-
                 y_t=(d[i+1]-d[i])/(X[i+1]-X[i])
                 x0= d[i]/y_t
                 right_x= x0+X[i]
         else:
             d[i]=0
+
     return right_x-left_x #return the difference (full width)
 
 def batch_AP_width(run):
@@ -351,13 +350,13 @@ def load_gk_data():
     batch_cainh(gk_test["car_1"], 500, 600, 450, 499)
     batch_AP_width(gk_test["car_1"])
     gk_test["car_1"]["gk"]=np.arange(gk_start, gk_stop+1)*24/99
-    #batch_ica_area(gk_test["car_1"], 500, 520)
+    batch_ica_area(gk_test["car_1"], 500, 520)
 
     return gk_test
 
 
 
-def make_figure(ena, gk):
+def make_figure(ena, gk, figname):
     """ Generates Figures 6 found in Chang & Higley (2017) and saves pdfs to '/Figures' folder.
 
         Args:
@@ -468,7 +467,7 @@ def make_figure(ena, gk):
     ax2a.legend(loc='center left', bbox_to_anchor=(1, 0.5), numpoints=1, frameon=False)
 
     fig1.tight_layout()
-    fig1.savefig('Figures/Figure6.pdf', format ='pdf')
+    fig1.savefig('Figures/'+figname+'.pdf', format ='pdf')
     #fig2.savefig('Figures/Figure6-supp1.pdf', format ='pdf')
     return fig1
 
